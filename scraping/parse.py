@@ -21,11 +21,13 @@ FIELD_NAMES = [field.name for field in fields(Jobs)]
 
 def parse_single_job(soup: BeautifulSoup) -> Jobs:
     return Jobs(
-        vacancy_name=soup.select_one(".h3.job-list-item__link").text,
-        company=soup.select_one("a.mr-2").text,
+        vacancy_name=soup.select_one(
+            ".h3.job-list-item__link"
+        ).text.strip(),
+        company=soup.select_one("a.mr-2").text.strip(),
         years_of_experience=soup.select_one(
             ".job-list-item__job-info > span:-soup-contains('experience')"
-        ).text,
+        ).text.replace(" · ", ""),
         technologies=find_technologies(soup)
     )
 
@@ -48,10 +50,10 @@ def main(output_csv_path: str) -> None:
     num_pages = get_page_num(soup)
     all_jobs = get_single_job(soup)
 
-    # for page_num in range(2, num_pages + 1):
-    #     page = requests.get(BASE_URL, {"page": page_num}).content
-    #     soup = BeautifulSoup(page, "html.parser")
-    #     all_jobs.extend(get_single_job(soup))
+    for page_num in range(2, num_pages + 1):
+        page = requests.get(BASE_URL, {"page": page_num}).content
+        soup = BeautifulSoup(page, "html.parser")
+        all_jobs.extend(get_single_job(soup))
 
     with open(output_csv_path, "w", newline="") as file:
         writer = csv.writer(file)
