@@ -5,3 +5,4 @@ requests~=2.31.0
 beautifulsoup4~=4.12.2
 pandas~=2.1.1
 matplotlib~=3.8.0
+jupyter==1.0.0
